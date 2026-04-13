@@ -2,7 +2,7 @@
 
 ## 7.1 Overview
 
-See `diagrams/deployment.puml`.
+![Deployment Diagram](diagrams/deployment.svg)
 
 The system is a single Python process. There is no server, container, or network component. It runs entirely on a developer's local machine.
 

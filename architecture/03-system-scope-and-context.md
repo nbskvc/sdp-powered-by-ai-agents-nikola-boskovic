@@ -6,7 +6,7 @@ The Game of Life system accepts an initial grid configuration, evolves it genera
 
 ## 3.2 Context Diagram
 
-See `diagrams/context.puml`.
+![Context Diagram](diagrams/context.svg)
 
 ## 3.3 External Interfaces
 

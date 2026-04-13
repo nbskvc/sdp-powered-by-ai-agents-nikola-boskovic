@@ -2,7 +2,7 @@
 
 ## 6.1 Scenario: Simulation Loop
 
-See `diagrams/seq-simulation-loop.puml`.
+![Simulation Loop](diagrams/seq-simulation-loop.svg)
 
 The user starts the simulation by calling `run(initial_grid, generations)`. For each generation:
 
@@ -16,7 +16,7 @@ The loop runs for the configured number of generations (or indefinitely if unbou
 
 ## 6.2 Scenario: next_generation() Computation
 
-See `diagrams/seq-next-generation.puml`.
+![Next Generation Computation](diagrams/seq-next-generation.svg)
 
 Inside `next_generation(grid)`:
 

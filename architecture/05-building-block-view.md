@@ -2,7 +2,7 @@
 
 ## 5.1 Level 1 — Containers
 
-See `diagrams/container.puml`.
+![Container Diagram](diagrams/container.svg)
 
 | Container   | Responsibility |
 |-------------|----------------|
@@ -17,7 +17,7 @@ Dependency rule: `main` → `renderer` → `simulation` → `grid`
 
 ## 5.2 Level 2 — Components
 
-See `diagrams/component.puml`.
+![Component Diagram](diagrams/component.svg)
 
 ### `grid` module
 
