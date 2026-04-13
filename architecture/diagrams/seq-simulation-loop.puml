@@ -1,0 +1,27 @@
+@startuml seq-simulation-loop
+title Runtime: Simulation Loop
+
+actor User
+participant "main" as main
+participant "simulation" as sim
+participant "renderer" as rend
+
+User -> main : run(initial_grid, generations)
+activate main
+
+loop each generation
+  main -> sim : next_generation(grid)
+  activate sim
+  sim --> main : new_grid
+  deactivate sim
+
+  main -> rend : render(new_grid)
+  activate rend
+  rend --> User : prints grid to stdout
+  deactivate rend
+
+  main -> main : grid = new_grid
+end
+
+deactivate main
+@enduml

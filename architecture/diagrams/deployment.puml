@@ -1,0 +1,19 @@
+@startuml deployment
+title Deployment View — Game of Life
+
+node "Developer Machine" {
+  node "Python Runtime (3.11+)" {
+    artifact "main.py" as main
+    artifact "grid.py" as grid
+    artifact "simulation.py" as sim
+    artifact "renderer.py" as rend
+  }
+  component "Terminal (stdout)" as terminal
+}
+
+main --> grid
+main --> sim
+main --> rend
+rend --> terminal
+
+@enduml

@@ -1,0 +1,12 @@
+@startuml context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title System Context — Game of Life
+
+Person(user, "User", "Starts the simulation and observes grid evolution")
+System(gol, "Game of Life", "Simulates Conway's Game of Life and renders each generation to the console")
+
+Rel(user, gol, "Provides initial config, runs simulation")
+Rel(gol, user, "Renders grid to console (stdout)")
+
+@enduml

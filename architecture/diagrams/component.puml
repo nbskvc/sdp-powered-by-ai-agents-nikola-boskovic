@@ -1,0 +1,24 @@
+@startuml component
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram — Game of Life
+
+Container_Boundary(grid, "grid") {
+  Component(grid_type, "Grid (type alias)", "set[tuple]", "Sparse set of live (row, col) cells")
+  Component(neighbours, "neighbours()", "function", "Returns the 8 neighbours of a cell")
+}
+
+Container_Boundary(simulation, "simulation") {
+  Component(next_gen, "next_generation()", "pure function", "Applies Conway's rules; returns new Grid")
+  Component(candidate, "candidates()", "function", "Collects cells to evaluate (live + their neighbours)")
+}
+
+Container_Boundary(renderer, "renderer") {
+  Component(render, "render()", "function", "Prints the bounding-box view of the grid to stdout")
+}
+
+Rel(next_gen, candidate, "Uses")
+Rel(next_gen, neighbours, "Uses")
+Rel(candidate, neighbours, "Uses")
+
+@enduml
