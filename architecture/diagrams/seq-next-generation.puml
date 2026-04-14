@@ -1,0 +1,17 @@
+@startuml seq-next-generation
+title Runtime: next_generation()
+
+participant "simulation" as sim
+participant "grid" as g
+
+activate sim
+sim -> g : neighbours(cell) for each candidate
+activate g
+g --> sim : set of 8 neighbour coords
+deactivate g
+
+sim -> sim : count live neighbours per candidate
+sim -> sim : apply Conway's rules → new live cells
+sim --> sim : return new Grid (set of live cells)
+deactivate sim
+@enduml

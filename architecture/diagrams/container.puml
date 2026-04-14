@@ -1,0 +1,20 @@
+@startuml container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Container Diagram — Game of Life
+
+Person(user, "User", "Runs the simulation")
+
+System_Boundary(gol, "Game of Life") {
+  Container(main, "main", "Python", "Entry point; wires modules and drives the simulation loop")
+  Container(simulation, "simulation", "Python module", "Applies Conway's rules to produce the next generation")
+  Container(grid, "grid", "Python module", "Grid data type and neighbour counting")
+  Container(renderer, "renderer", "Python module", "Renders the grid to stdout")
+}
+
+Rel(user, main, "Starts")
+Rel(main, simulation, "Calls next_generation()")
+Rel(main, renderer, "Calls render()")
+Rel(simulation, grid, "Reads cell and neighbour state")
+
+@enduml
