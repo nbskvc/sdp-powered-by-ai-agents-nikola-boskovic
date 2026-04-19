@@ -1,14 +1,14 @@
+import renderer
+import simulation
 from grid import Grid
-from renderer import render
-from simulation import next_generation
 
 
 def run(grid: Grid, generations: int | None = 10) -> None:
     try:
         count = 0
         while generations is None or count < generations:
-            grid = next_generation(grid)
-            render(grid)
+            grid = simulation.next_generation(grid)
+            renderer.render(grid)
             count += 1
     except KeyboardInterrupt:
         pass
