@@ -29,3 +29,18 @@ def test_sim_infra_001_1_s2_no_forbidden_imports():
     # THEN neither renderer nor main appear as imports
     assert "renderer" not in imports  # nosec B101
     assert "main" not in imports  # nosec B101
+
+
+# SIM-BE-001.1-S1: Candidates include all live cells
+def test_sim_be_001_1_s1_candidates_include_live_cells():
+    # GIVEN a grid with live cells at {(0,0), (1,1)}
+    from simulation import candidates
+
+    grid = {(0, 0), (1, 1)}
+
+    # WHEN candidates(grid) is called
+    result = candidates(grid)
+
+    # THEN both (0,0) and (1,1) are in the returned set
+    assert (0, 0) in result  # nosec B101
+    assert (1, 1) in result  # nosec B101
