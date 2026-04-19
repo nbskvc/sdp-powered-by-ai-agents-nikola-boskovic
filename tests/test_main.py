@@ -31,3 +31,43 @@ def test_runner_infra_001_1_s2_run_not_called_on_import(capsys):
     # THEN run() is not invoked and no output is produced
     captured = capsys.readouterr()
     assert captured.out == ""  # nosec B101
+
+
+# RUNNER-INFRA-001.2-S1: No files are created during a simulation run
+def test_runner_infra_001_2_s1_no_files_created(tmp_path, monkeypatch):
+    # GIVEN a clean working directory
+    from main import run
+
+    monkeypatch.chdir(tmp_path)
+
+    # WHEN run(grid, generations=5) is called
+    run({(0, 1), (1, 2), (2, 0), (2, 1), (2, 2)}, generations=5)
+
+    # THEN no new files exist in the working directory after the call
+    assert list(tmp_path.iterdir()) == []  # nosec B101
+
+
+# RUNNER-INFRA-001.2-S2: Grid variable is a Python set throughout execution
+def test_runner_infra_001_2_s2_grid_is_always_a_set():
+    # GIVEN the run() function executing
+    from main import run
+
+    seen_types = []
+    original_next = __import__("simulation").next_generation
+
+    def spy_next(grid):
+        seen_types.append(type(grid))
+        return original_next(grid)
+
+    import simulation
+
+    simulation.next_generation = spy_next
+
+    # WHEN run executes iterations
+    try:
+        run({(0, 1), (1, 2), (2, 0), (2, 1), (2, 2)}, generations=3)
+    finally:
+        simulation.next_generation = original_next
+
+    # THEN the grid is a set at every iteration boundary
+    assert all(t is set for t in seen_types)  # nosec B101
