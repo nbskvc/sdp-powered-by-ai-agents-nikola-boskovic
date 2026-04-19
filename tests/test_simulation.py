@@ -85,3 +85,17 @@ def test_sim_be_001_2_s1_next_generation_returns_new_set():
 
     # THEN result is not g
     assert result is not g  # nosec B101
+
+
+# SIM-BE-001.2-S2: Still life (block) is stable
+def test_sim_be_001_2_s2_block_is_stable():
+    # GIVEN a 2x2 block grid
+    from simulation import next_generation
+
+    grid = {(0, 0), (0, 1), (1, 0), (1, 1)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN the returned grid equals the original block
+    assert result == {(0, 0), (0, 1), (1, 0), (1, 1)}  # nosec B101
