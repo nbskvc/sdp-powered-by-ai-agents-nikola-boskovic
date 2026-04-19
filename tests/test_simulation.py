@@ -71,3 +71,17 @@ def test_sim_be_001_1_s3_empty_grid_yields_empty_candidates():
 
     # THEN the returned set is empty
     assert result == set()  # nosec B101
+
+
+# SIM-BE-001.2-S1: Returns a new set, not the input
+def test_sim_be_001_2_s1_next_generation_returns_new_set():
+    # GIVEN any non-empty grid g
+    from simulation import next_generation
+
+    g = {(0, 0), (0, 1), (1, 0), (1, 1)}
+
+    # WHEN result = next_generation(g)
+    result = next_generation(g)
+
+    # THEN result is not g
+    assert result is not g  # nosec B101
