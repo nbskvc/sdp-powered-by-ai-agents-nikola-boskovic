@@ -99,3 +99,102 @@ def test_sim_be_001_2_s2_block_is_stable():
 
     # THEN the returned grid equals the original block
     assert result == {(0, 0), (0, 1), (1, 0), (1, 1)}  # nosec B101
+
+
+# SIM-STORY-001-S1: Live cell with 2 live neighbours survives
+def test_sim_story_001_s1_live_cell_with_2_neighbours_survives():
+    # GIVEN a live cell at (1,1) with exactly 2 live neighbours
+    from simulation import next_generation
+
+    grid = {(1, 1), (1, 0), (1, 2)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN (1,1) is present in the returned grid
+    assert (1, 1) in result  # nosec B101
+
+
+# SIM-STORY-001-S2: Live cell with 3 live neighbours survives
+def test_sim_story_001_s2_live_cell_with_3_neighbours_survives():
+    # GIVEN a live cell at (1,1) with exactly 3 live neighbours
+    from simulation import next_generation
+
+    grid = {(1, 1), (0, 0), (0, 1), (0, 2)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN (1,1) is present in the returned grid
+    assert (1, 1) in result  # nosec B101
+
+
+# SIM-STORY-001-S3: Live cell with fewer than 2 live neighbours dies
+def test_sim_story_001_s3_live_cell_with_1_neighbour_dies():
+    # GIVEN a live cell at (1,1) with exactly 1 live neighbour
+    from simulation import next_generation
+
+    grid = {(1, 1), (1, 0)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN (1,1) is absent from the returned grid
+    assert (1, 1) not in result  # nosec B101
+
+
+# SIM-STORY-001-S4: Live cell with more than 3 live neighbours dies
+def test_sim_story_001_s4_live_cell_with_4_neighbours_dies():
+    # GIVEN a live cell at (1,1) with exactly 4 live neighbours
+    from simulation import next_generation
+
+    grid = {(1, 1), (0, 0), (0, 1), (0, 2), (1, 0)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN (1,1) is absent from the returned grid
+    assert (1, 1) not in result  # nosec B101
+
+
+# SIM-STORY-001-S5: Dead cell with exactly 3 live neighbours becomes alive
+def test_sim_story_001_s5_dead_cell_with_3_neighbours_becomes_alive():
+    # GIVEN (2,2) is dead and has exactly 3 live neighbours
+    from simulation import next_generation
+
+    grid = {(1, 1), (1, 2), (1, 3)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN (2,2) is present in the returned grid
+    assert (2, 2) in result  # nosec B101
+
+
+# SIM-STORY-001-S6: Input grid is not mutated
+def test_sim_story_001_s6_input_grid_not_mutated():
+    # GIVEN a grid g with a known set of live cells
+    from simulation import next_generation
+
+    g = {(1, 0), (1, 1), (1, 2)}
+    original = g.copy()
+
+    # WHEN next_generation(g) is called
+    next_generation(g)
+
+    # THEN g is unchanged after the call
+    assert g == original  # nosec B101
+
+
+# SIM-STORY-001-S7: Blinker oscillates correctly
+def test_sim_story_001_s7_blinker_oscillates():
+    # GIVEN a horizontal blinker
+    from simulation import next_generation
+
+    grid = {(1, 0), (1, 1), (1, 2)}
+
+    # WHEN next_generation(grid) is called
+    result = next_generation(grid)
+
+    # THEN the returned grid equals the vertical blinker
+    assert result == {(0, 1), (1, 1), (2, 1)}  # nosec B101
