@@ -59,3 +59,15 @@ def test_sim_be_001_1_s2_candidates_include_all_neighbours():
     # THEN the returned set contains (0,0) and all 8 of its neighbours
     expected = {(r, c) for r in (-1, 0, 1) for c in (-1, 0, 1)}
     assert result == expected  # nosec B101
+
+
+# SIM-BE-001.1-S3: Empty grid yields empty candidates
+def test_sim_be_001_1_s3_empty_grid_yields_empty_candidates():
+    # GIVEN an empty grid
+    from simulation import candidates
+
+    # WHEN candidates(grid) is called
+    result = candidates(set())
+
+    # THEN the returned set is empty
+    assert result == set()  # nosec B101
