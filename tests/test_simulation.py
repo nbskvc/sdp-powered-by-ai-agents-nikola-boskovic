@@ -44,3 +44,18 @@ def test_sim_be_001_1_s1_candidates_include_live_cells():
     # THEN both (0,0) and (1,1) are in the returned set
     assert (0, 0) in result  # nosec B101
     assert (1, 1) in result  # nosec B101
+
+
+# SIM-BE-001.1-S2: Candidates include all neighbours of live cells
+def test_sim_be_001_1_s2_candidates_include_all_neighbours():
+    # GIVEN a grid with a single live cell at (0,0)
+    from simulation import candidates
+
+    grid = {(0, 0)}
+
+    # WHEN candidates(grid) is called
+    result = candidates(grid)
+
+    # THEN the returned set contains (0,0) and all 8 of its neighbours
+    expected = {(r, c) for r in (-1, 0, 1) for c in (-1, 0, 1)}
+    assert result == expected  # nosec B101
