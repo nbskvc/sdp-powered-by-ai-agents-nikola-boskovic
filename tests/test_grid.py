@@ -21,3 +21,31 @@ def test_grid_be_001_1_s2_valid_grid_value_satisfies_type():
 
     # THEN it is usable as a grid
     assert g == {(0, 0), (1, 2)}  # nosec B101
+
+
+# GRID-INFRA-001.1-S1: Module imports cleanly in a standard Python 3.11+ environment
+def test_grid_infra_001_1_s1_module_imports_cleanly():
+    # GIVEN a Python 3.12 interpreter
+    # WHEN import grid is executed
+    import importlib
+
+    spec = importlib.util.find_spec("grid")
+
+    # THEN the import succeeds with no errors
+    assert spec is not None  # nosec B101
+
+
+# GRID-INFRA-001.1-S2: No side effects on import
+def test_grid_infra_001_1_s2_no_side_effects_on_import(capsys):
+    # GIVEN the grid module
+    import importlib
+    import sys
+
+    # WHEN it is imported (force reimport)
+    sys.modules.pop("grid", None)
+    importlib.import_module("grid")
+
+    # THEN no output is written to stdout or stderr
+    captured = capsys.readouterr()
+    assert captured.out == ""  # nosec B101
+    assert captured.err == ""  # nosec B101
