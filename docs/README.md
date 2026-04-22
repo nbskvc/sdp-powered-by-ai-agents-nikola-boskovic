@@ -25,13 +25,13 @@ cp -r modules/module-6-project/starter/* docs/
 Replace the TODO placeholders:
 
 ```python
-project = "Game of Life"
-copyright = "2026, Nikola Boskovic"
-author = "Nikola Boskovic"
+project = "Mars Rover"              # Your kata name
+copyright = "2026, Your Name"       # Your name
+author = "Your Name"                # Your name
 
 html_theme_options = {
-    "project_name": "The game of life",
-    "github_url": "https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic",
+    "project_name": "Mars Rover",   # Your kata name
+    "github_url": "https://github.com/YOUR_USERNAME/YOUR_REPO",
 }
 ```
 

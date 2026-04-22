@@ -1,9 +1,9 @@
 """Sphinx configuration file for Kata documentation."""
 
 # -- Project information -----------------------------------------------------
-project = "My Kata"  # TODO: Replace with your kata name
-copyright = "2026, Your Name"  # TODO: Replace with your name
-author = "Your Name"  # TODO: Replace with your name
+project = "Game of Life"
+copyright = "2026, Nikola Boskovic"
+author = "Nikola Boskovic"
 release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
@@ -21,8 +21,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "sphinx_wagtail_theme"
 
 html_theme_options = {
-    "project_name": "My Kata",  # TODO: Replace with your kata name
-    "github_url": "https://github.com/YOUR_USERNAME/YOUR_REPO",  # TODO: Replace
+    "project_name": "Game of Life",
+    "github_url": "https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic",
     "footer_links": "",
 }
 
