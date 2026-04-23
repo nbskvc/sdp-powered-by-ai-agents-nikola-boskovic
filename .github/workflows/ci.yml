@@ -2,12 +2,8 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - 'feature/**'
-      - 'fix/**'
     paths:
-      - 'src/**'
+      - '*.py'
       - 'tests/**'
       - 'Dockerfile'
       - 'pyproject.toml'
@@ -16,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/**'
+      - '*.py'
       - 'tests/**'
       - 'Dockerfile'
       - 'pyproject.toml'
@@ -37,4 +33,4 @@ jobs:
         run: docker build -t kata-ci .
 
       - name: Run tests in Docker
-        run: docker run --rm kata-ci
+        run: docker run --rm kata-ci pytest -q
