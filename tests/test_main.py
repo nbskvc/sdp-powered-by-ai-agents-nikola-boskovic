@@ -260,3 +260,39 @@ def test_runner_story_001_s4_unbounded_exits_on_keyboard_interrupt():
 
     # THEN the simulation exits cleanly without an unhandled exception
     assert exited_cleanly  # nosec B101
+
+
+# RUNNER-BE-002.2-S1: Each Enter press triggers exactly one generation
+def test_runner_be_002_2_s1_step_mode_each_enter_triggers_one_generation(monkeypatch):
+    # GIVEN run(grid, generations=3, step=True) with stdin yielding 3 Enter presses
+    import main
+    import renderer
+    import simulation
+
+    orig_next = simulation.next_generation
+    orig_render = renderer.render
+    next_calls, render_calls = [], []
+
+    simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
+    renderer.render = lambda g: render_calls.append(1)
+
+    inputs = iter(["", "", "", EOFError()])
+
+    def fake_input():
+        val = next(inputs)
+        if isinstance(val, BaseException):
+            raise val
+        return val
+
+    monkeypatch.setattr("builtins.input", fake_input)
+
+    # WHEN run(grid, generations=3, step=True) is called
+    try:
+        main.run({(1, 0), (1, 1), (1, 2)}, generations=3, step=True)
+    finally:
+        simulation.next_generation = orig_next
+        renderer.render = orig_render
+
+    # THEN next_generation and render are each called exactly 3 times
+    assert len(next_calls) == 3  # nosec B101
+    assert len(render_calls) == 3  # nosec B101
