@@ -108,6 +108,49 @@ THEN
 
 ---
 
+## RUNNER-BE-001.2: Validate `run()` inputs (grid and generations)
+
+AS A developer
+I WANT `run(grid, generations)` to validate its inputs
+SO THAT invalid inputs fail fast with clear errors instead of producing undefined behavior
+
+Architecture reference: architecture/07-deployment-view.md — Entry point; architecture/05-building-block-view.md — `main` module, `run()`
+
+### Scenario RUNNER-BE-001.2-S1: Reject non-set grid argument
+
+GIVEN
+* `grid` is not a set
+
+WHEN
+* `run(grid, generations=1)` is called
+
+THEN
+* a `TypeError` is raised
+
+### Scenario RUNNER-BE-001.2-S2: Reject invalid cell coordinate tuples
+
+GIVEN
+* `grid` contains a cell that is not a `(row, col)` tuple of integers
+
+WHEN
+* `run(grid, generations=1)` is called
+
+THEN
+* a `TypeError` is raised
+
+### Scenario RUNNER-BE-001.2-S3: Reject negative generation counts
+
+GIVEN
+* `generations` is -1
+
+WHEN
+* `run(grid, generations=-1)` is called
+
+THEN
+* a `ValueError` is raised
+
+---
+
 # Infrastructure Stories
 
 ## RUNNER-INFRA-001.1: `main.py` is the CLI entry point executed via `python main.py`

@@ -83,6 +83,28 @@ THEN
 
 ---
 
+## GRID-BE-001.2: Implement `neighbours()` to return the 8 surrounding cells
+
+AS A developer
+I WANT `neighbours(cell) -> set[Cell]` to return exactly the 8 neighbour coordinates of a cell
+SO THAT neighbour logic is centralized in the `grid` module and reusable by the simulation
+
+Architecture reference: architecture/05-building-block-view.md — `grid` module, `neighbours()` component
+
+### Scenario GRID-BE-001.2-S1: `neighbours()` returns the 8 surrounding coordinates
+
+GIVEN
+* a cell coordinate (0,0)
+
+WHEN
+* `neighbours((0,0))` is called
+
+THEN
+* it returns exactly the 8 coordinates surrounding (0,0)
+* it does not include (0,0) itself
+
+---
+
 # Infrastructure Stories
 
 ## GRID-INFRA-001.1: grid module is importable as a standalone Python file
