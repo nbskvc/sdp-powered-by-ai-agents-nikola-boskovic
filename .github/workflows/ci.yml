@@ -9,8 +9,6 @@ on:
       - 'pyproject.toml'
       - '.github/workflows/ci.yml'
   pull_request:
-    branches:
-      - main
     paths:
       - '*.py'
       - 'tests/**'

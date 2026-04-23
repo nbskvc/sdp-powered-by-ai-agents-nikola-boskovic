@@ -85,7 +85,7 @@ def test_runner_be_001_1_s1_next_generation_called_before_render():
     orig_render = renderer.render
 
     simulation.next_generation = lambda g: call_order.append("next") or orig_next(g)
-    renderer.render = lambda g: call_order.append("render")
+    renderer.render = lambda g, **kwargs: call_order.append("render")
 
     # WHEN run(grid, generations=1) is called
     try:
@@ -110,7 +110,7 @@ def test_runner_be_001_1_s2_run_passes_updated_grid_to_render():
     rendered_grids = []
     orig_render = renderer.render
 
-    renderer.render = lambda g: rendered_grids.append(g)
+    renderer.render = lambda g, **kwargs: rendered_grids.append(g)
 
     # WHEN run(g0, generations=1) is called
     try:
@@ -136,7 +136,7 @@ def test_runner_be_001_1_s3_run_chains_generations():
     received = []
 
     simulation.next_generation = lambda g: received.append(g) or orig_next(g)
-    renderer.render = lambda g: None
+    renderer.render = lambda g, **kwargs: None
 
     # WHEN run(g0, generations=2) is called
     try:
@@ -163,7 +163,7 @@ def test_runner_story_001_s1_loop_runs_exactly_n_generations():
     next_calls, render_calls = [], []
 
     simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
-    renderer.render = lambda g: render_calls.append(1)
+    renderer.render = lambda g, **kwargs: render_calls.append(1)
 
     # WHEN run(grid, generations=3) is called
     try:
@@ -189,7 +189,7 @@ def test_runner_story_001_s2_grid_advances_each_iteration():
     orig_render = renderer.render
     rendered = []
 
-    renderer.render = lambda g: rendered.append(g)
+    renderer.render = lambda g, **kwargs: rendered.append(g)
 
     # WHEN run(g0, generations=2) is called
     try:
@@ -212,7 +212,7 @@ def test_runner_story_001_s3_loop_terminates():
     import renderer
 
     orig_render = renderer.render
-    renderer.render = lambda g: None
+    renderer.render = lambda g, **kwargs: None
 
     # WHEN the loop completes
     try:
@@ -246,7 +246,7 @@ def test_runner_story_001_s4_unbounded_exits_on_keyboard_interrupt():
         return orig_next(g)
 
     simulation.next_generation = raising_next
-    renderer.render = lambda g: None
+    renderer.render = lambda g, **kwargs: None
 
     # WHEN a KeyboardInterrupt is raised externally
     try:
@@ -274,7 +274,7 @@ def test_runner_be_002_2_s1_step_mode_each_enter_triggers_one_generation(monkeyp
     next_calls, render_calls = [], []
 
     simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
-    renderer.render = lambda g: render_calls.append(1)
+    renderer.render = lambda g, **kwargs: render_calls.append(kwargs.get("size"))
 
     inputs = iter(["", "", "", EOFError()])
 
@@ -296,3 +296,23 @@ def test_runner_be_002_2_s1_step_mode_each_enter_triggers_one_generation(monkeyp
     # THEN next_generation and render are each called exactly 3 times
     assert len(next_calls) == 3  # nosec B101
     assert len(render_calls) == 3  # nosec B101
+
+
+# RUNNER-BE-002.2-S5: run passes render size through to renderer
+def test_runner_be_002_2_s5_run_passes_size_to_renderer(monkeypatch):
+    # GIVEN a spy renderer
+    import main
+    import renderer
+
+    seen_sizes = []
+    orig_render = renderer.render
+    renderer.render = lambda g, **kwargs: seen_sizes.append(kwargs.get("size"))
+
+    # WHEN run is called with a custom size
+    try:
+        main.run({(0, 0)}, generations=2, step=False, size=12)
+    finally:
+        renderer.render = orig_render
+
+    # THEN renderer receives that size for each iteration
+    assert seen_sizes == [12, 12]  # nosec B101

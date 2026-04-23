@@ -56,30 +56,31 @@ def test_render_infra_001_2_s2_no_stderr(capsys):
     assert captured.err == ""  # nosec B101
 
 
-# RENDER-BE-001.1-S1: Bounding box derived from live cell coordinates
-def test_render_be_001_1_s1_bounding_box_from_coordinates(capsys):
-    # GIVEN a grid with live cells at {(0,0), (2,3)}
+# RENDER-BE-001.1-S1: Fixed viewport renders exactly 8x8 by default
+def test_render_be_001_1_s1_fixed_viewport_is_8x8_by_default(capsys):
+    # GIVEN a grid with live cells at known coordinates
     from renderer import render
 
     # WHEN render(grid) is called
     render({(0, 0), (2, 3)})
 
-    # THEN output spans rows 0-2 and columns 0-3
+    # THEN output contains exactly 8 lines of 8 characters
     lines = capsys.readouterr().out.splitlines()
-    assert len(lines) == 3  # nosec B101
-    assert len(lines[0]) == 4  # nosec B101
+    assert len(lines) == 8  # nosec B101
+    assert all(len(line) == 8 for line in lines)  # nosec B101
 
 
-# RENDER-BE-001.1-S2: Each row printed as a single line
-def test_render_be_001_1_s2_each_row_is_one_line(capsys):
-    # GIVEN a grid with 3 rows in its bounding box
+# RENDER-BE-001.1-S2: Live cell coordinates map to correct positions in viewport
+def test_render_be_001_1_s2_live_cells_map_to_positions(capsys):
+    # GIVEN a grid with live cells at (0,0) and (7,7)
     from renderer import render
 
-    render({(0, 0), (1, 0), (2, 0)})
+    render({(0, 0), (7, 7)})
 
-    # THEN stdout receives exactly 3 lines
+    # THEN the first char of first line and last char of last line are live
     lines = capsys.readouterr().out.splitlines()
-    assert len(lines) == 3  # nosec B101
+    assert lines[0][0] == "O"  # nosec B101
+    assert lines[7][7] == "O"  # nosec B101
 
 
 # RENDER-BE-001.1-S3: render writes only to stdout, not stderr
@@ -125,10 +126,10 @@ def test_render_story_001_s3_output_bounded_by_extents(capsys):
 
     render({(1, 1), (1, 3), (3, 1), (3, 3)})
 
-    # THEN printed output covers exactly that row/column range
+    # THEN output is a fixed viewport (8x8)
     lines = capsys.readouterr().out.splitlines()
-    assert len(lines) == 3  # nosec B101
-    assert len(lines[0]) == 3  # nosec B101
+    assert len(lines) == 8  # nosec B101
+    assert all(len(line) == 8 for line in lines)  # nosec B101
 
 
 # RENDER-STORY-001-S4: Empty grid produces no cell output
@@ -139,7 +140,7 @@ def test_render_story_001_s4_empty_grid_no_output(capsys):
     # WHEN render(grid) is called
     render(set())
 
-    # THEN no cell characters are written to stdout
+    # THEN output contains only dead cells
     out = capsys.readouterr().out
     assert "O" not in out  # nosec B101
-    assert "." not in out  # nosec B101
+    assert "." in out  # nosec B101
