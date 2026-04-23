@@ -57,6 +57,36 @@ pip install pytest
 python main.py
 ```
 
+## Run (Docker)
+
+**Build:**
+
+```bash
+docker build -t kata-ci .
+```
+
+**Default run (non-interactive — runs tests):**
+
+```bash
+docker run --rm kata-ci
+```
+
+**Step mode (interactive):**
+
+```bash
+docker run --rm -it kata-ci --step
+```
+
+In step mode the program first prompts for a grid size (`NxN`), then advances one generation each time you press Enter.
+
+> **Note:** `--step` without `-it` exits immediately because Docker receives EOF on a non-interactive stdin. To pipe a fixed number of steps instead:
+>
+> ```bash
+> printf "\n\n\n" | docker run --rm -i kata-ci --step
+> ```
+>
+> Each `\n` advances one generation (the first `\n` confirms the default grid size prompt).
+
 ## Run Tests
 
 ```bash

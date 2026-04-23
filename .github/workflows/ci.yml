@@ -9,8 +9,6 @@ on:
       - 'pyproject.toml'
       - '.github/workflows/ci.yml'
   pull_request:
-    branches:
-      - main
     paths:
       - '*.py'
       - 'tests/**'
@@ -33,4 +31,4 @@ jobs:
         run: docker build -t kata-ci .
 
       - name: Run tests in Docker
-        run: docker run --rm kata-ci pytest -q
+        run: docker run --rm --entrypoint python kata-ci -m pytest -q
