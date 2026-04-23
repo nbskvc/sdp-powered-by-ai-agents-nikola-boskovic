@@ -212,3 +212,38 @@ WHEN
 
 THEN
 * it is an instance of `set`
+
+---
+
+## RUNNER-INFRA-001.3: Project is buildable and runnable via Docker on localhost
+
+AS A developer
+I WANT to build and run the project as a Docker image on localhost
+SO THAT the simulation can be executed in a reproducible, dependency-free environment
+
+Architecture reference: architecture/07-deployment-view.md — Deployment Steps; architecture/02-constraints.md — T1, T2
+
+### Scenario RUNNER-INFRA-001.3-S1: Docker image builds successfully
+
+GIVEN
+* a `Dockerfile` is present at the repository root
+* Docker is installed and running on localhost
+
+WHEN
+* `docker build -t game-of-life .` is executed
+
+THEN
+* the build completes with exit code 0
+* an image tagged `game-of-life` exists in the local Docker image store
+
+### Scenario RUNNER-INFRA-001.3-S2: Docker container runs and exits cleanly
+
+GIVEN
+* the `game-of-life` image has been built successfully
+
+WHEN
+* `docker run --rm game-of-life` is executed
+
+THEN
+* the container starts, executes the default `CMD`, and exits with code 0
+* no container artefact remains after the run (`--rm` flag)
