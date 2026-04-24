@@ -49,3 +49,25 @@ def test_grid_infra_001_1_s2_no_side_effects_on_import(capsys):
     captured = capsys.readouterr()
     assert captured.out == ""  # nosec B101
     assert captured.err == ""  # nosec B101
+
+
+# GRID-BE-001.2-S1: neighbours() returns the 8 surrounding coordinates
+def test_grid_be_001_2_s1_neighbours_returns_8_surrounding_coordinates():
+    # GIVEN a cell coordinate (0,0)
+    from grid import neighbours
+
+    # WHEN neighbours((0,0)) is called
+    result = neighbours((0, 0))
+
+    # THEN it returns exactly the 8 surrounding coordinates and not the cell itself
+    expected = {
+        (-1, -1),
+        (-1, 0),
+        (-1, 1),
+        (0, -1),
+        (0, 1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+    }
+    assert result == expected  # nosec B101
