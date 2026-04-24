@@ -21,20 +21,20 @@ THEN
 
 ---
 
-## Scenario RENDER-STORY-001-S2: Dead cells within the bounding box are represented
+## Scenario RENDER-STORY-001-S2: Dead cells within the viewport are represented
 
 GIVEN
-* a grid where some cells within the bounding box are dead
+* a grid where some cells within the viewport are dead
 
 WHEN
 * `render(grid)` is called
 
 THEN
-* stdout contains a distinct character for dead cells at those positions
+* stdout contains a distinct character for dead cells at those positions (`.`)
 
 ---
 
-## Scenario RENDER-STORY-001-S3: Output is bounded by the live cell extents
+## Scenario RENDER-STORY-001-S3: Output is a fixed-size viewport
 
 GIVEN
 * a grid with live cells spanning rows 1–3 and columns 1–3
@@ -43,11 +43,11 @@ WHEN
 * `render(grid)` is called
 
 THEN
-* the printed output covers exactly that row/column range — no extra blank rows or columns beyond the bounding box
+* the printed output is a fixed-size viewport (default 8×8)
 
 ---
 
-## Scenario RENDER-STORY-001-S4: Empty grid produces no cell output
+## Scenario RENDER-STORY-001-S4: Empty grid renders as all dead cells
 
 GIVEN
 * an empty grid
@@ -56,41 +56,41 @@ WHEN
 * `render(grid)` is called
 
 THEN
-* no cell characters are written to stdout (output may be blank or a single newline)
+* stdout contains only the dead-cell character (`.`) and no live-cell character (`O`)
 
 ---
 
 # Backend Stories
 
-## RENDER-BE-001.1: Implement `render()` to print a bounding-box view to stdout
+## RENDER-BE-001.1: Implement `render()` to print a fixed viewport to stdout
 
 AS A developer
-I WANT `render(grid: Grid) -> None` to compute the bounding box of live cells and print each row
-SO THAT the console output faithfully represents the current generation
+I WANT `render(grid: Grid, size: int = 8) -> None` to print a fixed `size×size` viewport
+SO THAT the console output is stable and easy to compare across generations
 
-Architecture reference: architecture/05-building-block-view.md — `renderer` module; architecture/decisions/adr-001-sparse-set-grid.md — bounding box computed dynamically
+Architecture reference: architecture/05-building-block-view.md — `renderer` module; architecture/decisions/adr-001-sparse-set-grid.md — sparse live-cell set
 
-### Scenario RENDER-BE-001.1-S1: Bounding box is derived from live cell coordinates
+### Scenario RENDER-BE-001.1-S1: Fixed viewport is 8×8 by default
 
 GIVEN
-* a grid with live cells at {(0,0), (2,3)}
+* a grid with any live cells
 
 WHEN
 * `render(grid)` is called
 
 THEN
-* the output spans rows 0–2 and columns 0–3
+* stdout contains exactly 8 lines of 8 characters
 
-### Scenario RENDER-BE-001.1-S2: Each row is printed as a single line
+### Scenario RENDER-BE-001.1-S2: Live cells map to correct positions in the viewport
 
 GIVEN
-* a grid with 3 rows in its bounding box
+* a grid with live cells at known coordinates
 
 WHEN
 * `render(grid)` is called
 
 THEN
-* stdout receives exactly 3 lines of cell characters
+* the corresponding characters in stdout are marked as live (`O`)
 
 ### Scenario RENDER-BE-001.1-S3: `render` writes only to stdout, not stderr
 

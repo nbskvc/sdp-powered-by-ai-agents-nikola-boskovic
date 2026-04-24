@@ -40,9 +40,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
-      # TODO: If your README.md is at repo root, uncomment to copy it into docs/
-      # - name: Copy README into docs
-      #   run: cp README.md docs/README.md
+      - name: Copy root README into docs
+        run: cp README.md docs/README.md
 
       - name: Build Sphinx site
         run: sphinx-build -b html docs docs/_build/html

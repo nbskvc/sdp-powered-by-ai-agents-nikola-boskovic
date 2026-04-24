@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic/actions/workflows/ci.yml/badge.svg)](https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic/actions/workflows/ci.yml)
 [![Docs](https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic/actions/workflows/docs-deploy.yml/badge.svg)](https://nbskvc.github.io/sdp-powered-by-ai-agents-nikola-boskovic/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/nbskvc/sdp-powered-by-ai-agents-nikola-boskovic/blob/main/LICENSE)
 
 A clean Python implementation of Conway's Game of Life, built as part of the *Software Development Processes Powered by AI Agents* course. The project demonstrates TDD/BDD practices, arc42 architecture documentation, and a fully automated CI/CD pipeline.
 
@@ -20,7 +20,7 @@ Conway's Game of Life is a zero-player cellular automaton. Given an initial grid
 | Layer | Choice |
 |---|---|
 | Language | Python 3.12 |
-| Data model | `Grid = frozenset[tuple[int, int]]` — pure, immutable |
+| Data model | `Grid = set[tuple[int, int]]` — sparse set of live cells |
 | Testing | pytest + pre-commit hooks |
 | Linting | ruff, black, isort |
 | Docs | Sphinx → GitHub Pages |
@@ -39,14 +39,14 @@ The core is split into three modules:
 **With Docker:**
 
 ```bash
-docker build -t game-of-life .
-docker run --rm game-of-life
+docker build -t kata-ci .
+docker run --rm kata-ci
 ```
 
-The container runs the full test suite by default. To run the simulation interactively instead:
+To run interactively (you’ll be prompted for grid size):
 
 ```bash
-docker run --rm game-of-life python main.py
+docker run --rm -it kata-ci
 ```
 
 **Without Docker:**
@@ -59,19 +59,13 @@ python main.py
 
 ## Run (Docker)
 
-**Build:**
-
-```bash
-docker build -t kata-ci .
-```
-
-**Default run (non-interactive — runs tests):**
+**Default run (non-interactive):**
 
 ```bash
 docker run --rm kata-ci
 ```
 
-**Step mode (interactive):**
+**Step mode (interactive, one generation per Enter):**
 
 ```bash
 docker run --rm -it kata-ci --step
@@ -79,24 +73,24 @@ docker run --rm -it kata-ci --step
 
 In step mode the program first prompts for a grid size (`NxN`), then advances one generation each time you press Enter.
 
-> **Note:** `--step` without `-it` exits immediately because Docker receives EOF on a non-interactive stdin. To pipe a fixed number of steps instead:
+> **Note:** `--step` without `-i` exits immediately because Docker receives EOF on a non-interactive stdin. To pipe a fixed number of steps instead:
 >
 > ```bash
 > printf "\n\n\n" | docker run --rm -i kata-ci --step
 > ```
 >
-> Each `\n` advances one generation (the first `\n` confirms the default grid size prompt).
+> Each `\n` advances one generation.
 
 ## Run Tests
 
 ```bash
-pytest
+.venv/bin/pytest -q
 ```
 
-Or via Docker (default container command):
+Or via Docker:
 
 ```bash
-docker run --rm game-of-life
+docker run --rm kata-ci pytest -q
 ```
 
 ## Documentation
@@ -126,4 +120,4 @@ Full Sphinx documentation (architecture, user stories, API) is published at:
 
 **Nikola Bošković** — [@nbskvc](https://github.com/nbskvc)
 
-*SDP Course — Module 5: TDD/BDD with AI Agents*
+*SDP Course — Module 6: Final Project*
