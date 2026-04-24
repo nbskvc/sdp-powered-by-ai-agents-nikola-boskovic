@@ -7,5 +7,7 @@ RUN pip install --no-cache-dir pytest
 
 COPY . .
 
-ENTRYPOINT ["python", "main.py"]
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD []
