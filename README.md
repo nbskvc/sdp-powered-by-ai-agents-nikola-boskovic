@@ -97,7 +97,7 @@ docker run --rm kata-ci pytest -q
 
 Full Sphinx documentation (architecture, user stories, API) is published at:
 
-**https://nbskvc.github.io/sdp-powered-by-ai-agents-nikola-boskovic/**
+**[nbskvc.github.io/sdp-powered-by-ai-agents-nikola-boskovic](https://nbskvc.github.io/sdp-powered-by-ai-agents-nikola-boskovic/)**
 
 ## Project Structure
 
