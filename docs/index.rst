@@ -1,7 +1,7 @@
 Game of Life Documentation
 ==========================
 
-.. TODO: Replace "My Kata" with your kata name and add a short description.
+Console-based Conway's Game of Life kata with step mode and Sphinx documentation.
 
 .. toctree::
    :maxdepth: 2
@@ -34,6 +34,7 @@ Game of Life Documentation
    user-stories/GRID-STORY-001
    user-stories/SIM-STORY-001
    user-stories/RUNNER-STORY-001
+   user-stories/RUNNER-STORY-002
    user-stories/RENDER-STORY-001
 
 Indices and tables

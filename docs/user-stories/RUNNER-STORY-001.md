@@ -230,20 +230,20 @@ GIVEN
 * Docker is installed and running on localhost
 
 WHEN
-* `docker build -t game-of-life .` is executed
+* `docker build -t kata-ci .` is executed
 
 THEN
 * the build completes with exit code 0
-* an image tagged `game-of-life` exists in the local Docker image store
+* an image tagged `kata-ci` exists in the local Docker image store
 
 ### Scenario RUNNER-INFRA-001.3-S2: Docker container runs and exits cleanly
 
 GIVEN
-* the `game-of-life` image has been built successfully
+* the `kata-ci` image has been built successfully
 
 WHEN
-* `docker run --rm game-of-life` is executed
+* `docker run --rm kata-ci` is executed
 
 THEN
-* the container starts, executes the default `CMD`, and exits with code 0
+* the container starts, executes the default entrypoint, and exits with code 0
 * no container artefact remains after the run (`--rm` flag)

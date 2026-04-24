@@ -162,6 +162,18 @@ THEN
 * no read is attempted on stdin
 * `next_generation` and `render` are each called exactly 3 times
 
+### Scenario RUNNER-BE-002.2-S5: `run()` passes viewport size to `render()`
+
+GIVEN
+* `run(grid, generations=2, step=False, size=12)` is called
+* `render` is observable (spy/mock)
+
+WHEN
+* the function runs to completion
+
+THEN
+* `render` is called with `size=12` on each iteration
+
 ---
 
 # Infrastructure Stories
