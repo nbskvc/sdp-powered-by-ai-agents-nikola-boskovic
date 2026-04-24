@@ -1,24 +1,26 @@
-from grid import Grid
+from grid import Grid, neighbours
 
 
 def candidates(grid: Grid) -> Grid:
-    return {(r + dr, c + dc) for r, c in grid for dr in (-1, 0, 1) for dc in (-1, 0, 1)}
+    return set(grid) | {n for cell in grid for n in neighbours(cell)}
 
 
-def _live_neighbour_count(cell: tuple, grid: Grid) -> int:
+def _live_neighbour_count(cell: tuple[int, int], grid: Grid) -> int:
+    return sum(1 for n in neighbours(cell) if n in grid)
+
+
+def _in_bounds(cell: tuple[int, int], size: int) -> bool:
     r, c = cell
-    return sum(
-        1
-        for dr in (-1, 0, 1)
-        for dc in (-1, 0, 1)
-        if (dr, dc) != (0, 0) and (r + dr, c + dc) in grid
-    )
+    return 0 <= r < size and 0 <= c < size
 
 
-def next_generation(grid: Grid) -> Grid:
-    return {
+def next_generation(grid: Grid, *, size: int | None = None) -> Grid:
+    next_grid = {
         cell
         for cell in candidates(grid)
         if _live_neighbour_count(cell, grid) == 3
         or (cell in grid and _live_neighbour_count(cell, grid) == 2)
     }
+    if size is None:
+        return next_grid
+    return {cell for cell in next_grid if _in_bounds(cell, size)}
