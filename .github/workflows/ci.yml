@@ -2,19 +2,7 @@ name: CI
 
 on:
   push:
-    paths:
-      - '*.py'
-      - 'tests/**'
-      - 'Dockerfile'
-      - 'pyproject.toml'
-      - '.github/workflows/ci.yml'
   pull_request:
-    paths:
-      - '*.py'
-      - 'tests/**'
-      - 'Dockerfile'
-      - 'pyproject.toml'
-      - '.github/workflows/ci.yml'
 
 permissions:
   contents: read
@@ -31,4 +19,4 @@ jobs:
         run: docker build -t kata-ci .
 
       - name: Run tests in Docker
-        run: docker run --rm --entrypoint python kata-ci -m pytest -q
+        run: docker run --rm kata-ci pytest -q
