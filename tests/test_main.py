@@ -55,9 +55,9 @@ def test_runner_infra_001_2_s2_grid_is_always_a_set():
     seen_types = []
     original_next = __import__("simulation").next_generation
 
-    def spy_next(grid):
+    def spy_next(grid, **kwargs):
         seen_types.append(type(grid))
-        return original_next(grid)
+        return original_next(grid, **kwargs)
 
     import simulation
 
@@ -84,7 +84,9 @@ def test_runner_be_001_1_s1_next_generation_called_before_render():
     orig_next = simulation.next_generation
     orig_render = renderer.render
 
-    simulation.next_generation = lambda g: call_order.append("next") or orig_next(g)
+    simulation.next_generation = lambda g, **kwargs: call_order.append(
+        "next"
+    ) or orig_next(g, **kwargs)
     renderer.render = lambda g, **kwargs: call_order.append("render")
 
     # WHEN run(grid, generations=1) is called
@@ -135,7 +137,9 @@ def test_runner_be_001_1_s3_run_chains_generations():
     orig_render = renderer.render
     received = []
 
-    simulation.next_generation = lambda g: received.append(g) or orig_next(g)
+    simulation.next_generation = lambda g, **kwargs: received.append(g) or orig_next(
+        g, **kwargs
+    )
     renderer.render = lambda g, **kwargs: None
 
     # WHEN run(g0, generations=2) is called
@@ -162,7 +166,9 @@ def test_runner_story_001_s1_loop_runs_exactly_n_generations():
     orig_render = renderer.render
     next_calls, render_calls = [], []
 
-    simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
+    simulation.next_generation = lambda g, **kwargs: next_calls.append(1) or orig_next(
+        g, **kwargs
+    )
     renderer.render = lambda g, **kwargs: render_calls.append(1)
 
     # WHEN run(grid, generations=3) is called
@@ -238,12 +244,12 @@ def test_runner_story_001_s4_unbounded_exits_on_keyboard_interrupt():
     orig_render = renderer.render
     count = 0
 
-    def raising_next(g):
+    def raising_next(g, **kwargs):
         nonlocal count
         count += 1
         if count >= 3:
             raise KeyboardInterrupt
-        return orig_next(g)
+        return orig_next(g, **kwargs)
 
     simulation.next_generation = raising_next
     renderer.render = lambda g, **kwargs: None
@@ -273,7 +279,9 @@ def test_runner_be_002_2_s1_step_mode_each_enter_triggers_one_generation(monkeyp
     orig_render = renderer.render
     next_calls, render_calls = [], []
 
-    simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
+    simulation.next_generation = lambda g, **kwargs: next_calls.append(1) or orig_next(
+        g, **kwargs
+    )
     renderer.render = lambda g, **kwargs: render_calls.append(kwargs.get("size"))
 
     inputs = iter(["", "", "", EOFError()])
@@ -316,3 +324,155 @@ def test_runner_be_002_2_s5_run_passes_size_to_renderer(monkeypatch):
 
     # THEN renderer receives that size for each iteration
     assert seen_sizes == [12, 12]  # nosec B101
+
+
+# RUNNER-BE-002.1-S1: --step flag is parsed as True
+def test_runner_be_002_1_s1_step_flag_parsed_true():
+    # GIVEN sys.argv contains ["main.py", "--step"]
+    import main
+
+    # WHEN the argument parser runs
+    args = main.parse_args(["--step"])
+
+    # THEN step=True
+    assert args.step is True  # nosec B101
+
+
+# RUNNER-BE-002.1-S2: Absence of --step defaults to False
+def test_runner_be_002_1_s2_step_flag_defaults_false():
+    # GIVEN sys.argv contains only ["main.py"]
+    import main
+
+    # WHEN the argument parser runs
+    args = main.parse_args([])
+
+    # THEN step=False
+    assert args.step is False  # nosec B101
+
+
+# RUNNER-BE-002.2-S2: EOF on stdin terminates the loop cleanly
+def test_runner_be_002_2_s2_step_mode_eof_terminates_cleanly(monkeypatch):
+    # GIVEN run(grid, generations=None, step=True) and EOF on first input()
+    import main
+    import renderer
+    import simulation
+
+    orig_next = simulation.next_generation
+    orig_render = renderer.render
+    next_calls, render_calls = [], []
+
+    simulation.next_generation = lambda g: next_calls.append(1) or orig_next(g)
+    renderer.render = lambda g, **kwargs: render_calls.append(1)
+    monkeypatch.setattr("builtins.input", lambda: (_ for _ in ()).throw(EOFError()))
+
+    # WHEN run attempts to read the first line
+    try:
+        main.run({(1, 0), (1, 1), (1, 2)}, generations=None, step=True)
+        returned_normally = True
+    except Exception:
+        returned_normally = False
+    finally:
+        simulation.next_generation = orig_next
+        renderer.render = orig_render
+
+    # THEN the function returns normally and no generation is rendered
+    assert returned_normally  # nosec B101
+    assert next_calls == []  # nosec B101
+    assert render_calls == []  # nosec B101
+
+
+# RUNNER-BE-002.2-S3: KeyboardInterrupt terminates the loop cleanly
+def test_runner_be_002_2_s3_step_mode_keyboard_interrupt_terminates_cleanly(
+    monkeypatch,
+):
+    # GIVEN run(grid, generations=None, step=True) and KeyboardInterrupt on input()
+    import main
+
+    monkeypatch.setattr(
+        "builtins.input", lambda: (_ for _ in ()).throw(KeyboardInterrupt())
+    )
+
+    # WHEN the interrupt is raised
+    # THEN the function returns normally (caught internally)
+    try:
+        main.run({(1, 0), (1, 1), (1, 2)}, generations=None, step=True)
+        returned_normally = True
+    except KeyboardInterrupt:
+        returned_normally = False
+
+    assert returned_normally  # nosec B101
+
+
+# RUNNER-BE-002.2-S4: step=False does not read from stdin
+def test_runner_be_002_2_s4_step_false_does_not_read_from_stdin(monkeypatch):
+    # GIVEN step=False and input() would raise if called
+    import main
+    import renderer
+
+    orig_render = renderer.render
+    renderer.render = lambda g, **kwargs: None
+    monkeypatch.setattr(
+        "builtins.input", lambda: (_ for _ in ()).throw(RuntimeError("stdin read"))
+    )
+
+    # WHEN run executes iterations
+    try:
+        main.run({(1, 0), (1, 1), (1, 2)}, generations=2, step=False)
+        returned_normally = True
+    except RuntimeError:
+        returned_normally = False
+    finally:
+        renderer.render = orig_render
+
+    # THEN no read is attempted on stdin
+    assert returned_normally  # nosec B101
+
+
+# RUNNER-BE-001.2-S1: Reject non-set grid argument
+def test_runner_be_001_2_s1_reject_non_set_grid_argument():
+    # GIVEN grid is not a set
+    import main
+
+    # WHEN run(grid, generations=1) is called
+    # THEN a TypeError is raised
+    try:
+        main.run("not-a-set", generations=1)  # type: ignore[arg-type]
+        raised = False
+    except TypeError:
+        raised = True
+
+    assert raised  # nosec B101
+
+
+# RUNNER-BE-001.2-S2: Reject invalid cell coordinate tuples
+def test_runner_be_001_2_s2_reject_invalid_cell_coordinate_tuples():
+    # GIVEN grid contains an invalid cell coordinate
+    import main
+
+    invalid_grid = {(0, 0), ("x", 1)}  # type: ignore[arg-type]
+
+    # WHEN run(grid, generations=1) is called
+    # THEN a TypeError is raised
+    try:
+        main.run(invalid_grid, generations=1)  # type: ignore[arg-type]
+        raised = False
+    except TypeError:
+        raised = True
+
+    assert raised  # nosec B101
+
+
+# RUNNER-BE-001.2-S3: Reject negative generation counts
+def test_runner_be_001_2_s3_reject_negative_generation_counts():
+    # GIVEN generations is -1
+    import main
+
+    # WHEN run(grid, generations=-1) is called
+    # THEN a ValueError is raised
+    try:
+        main.run({(0, 0)}, generations=-1)
+        raised = False
+    except ValueError:
+        raised = True
+
+    assert raised  # nosec B101
